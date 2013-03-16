@@ -12,6 +12,13 @@ import org.junit.Test;
 public class DjsonTest {
 	
 	@Test
+	public void utf8bomTest() throws IOException{
+		File file = new File("src/test/resources/json/utf8bom.json");
+		Var json = Djson.parse(file);
+		assertThat(json.get("key").toInt(), is(7788));
+	}
+	
+	@Test
 	public void urlTest() throws IOException {
 		URL url = new URL("http://apis.daum.net/socialpick/search?category=e&output=json");
 		Var json = Djson.parse(url);

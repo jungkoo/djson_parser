@@ -54,7 +54,10 @@ public class Var {
 		if (obj==null)
 			throw new NotfoundDataException();
 		
-		return new Var(obj);		
+		if (obj instanceof Var)
+			return Var.class.cast(obj);
+		else
+			return new Var(obj);		
 	}
 	
 	public Var get(String key) {
@@ -65,7 +68,10 @@ public class Var {
 		if (obj==null)
 			throw new NotfoundDataException("Not found. MAP["+key+"]");
 		
-		return new Var(obj);
+		if (obj instanceof Var)
+			return Var.class.cast(obj);
+		else
+			return new Var(obj);
 	}
 	
 	/***
@@ -221,6 +227,32 @@ public class Var {
 			return toMap().size();
 		
 		throw new UnsupportedOperationException(String.format("'%s' type is unsupported 'size()' (supported Type is 'MAP' or 'LIST')", type)); 
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Var add(Object item) {
+		if (type==DataType.LIST) {
+			if (item instanceof Var) 
+				((List)var).add(((Var)item).toObject());
+			else 
+				((List)var).add(item);
+			
+			return this;
+		}
+		throw new UnsupportedOperationException(String.format("'%s' type is unsupported 'add(Object item)' (supported Type is 'LIST')", type));
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Var put(String key, Object value) {
+		if (type==DataType.MAP) {
+			if (value instanceof Var) 
+				((Map)var).put(key, ((Var)value).toObject());
+			else
+				((Map)var).put(key, value);
+			
+			return this;
+		}
+		throw new UnsupportedOperationException(String.format("'%s' type is unsupported 'put(String key, Object value)' (supported Type is 'MAP')", type));
 	}
 	
 	/**

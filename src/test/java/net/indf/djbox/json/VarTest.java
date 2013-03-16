@@ -1,5 +1,6 @@
 package net.indf.djbox.json;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -17,6 +18,37 @@ import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 
 public class VarTest {
+	
+	@Test
+	public void addMapTypeTest() {
+		Map map = new HashMap();
+		map.put("key1", "val1");
+		map.put("key2", "val2");
+		
+		Var var = new Var(map);
+		assertThat(var.isType(), is(DataType.MAP) );
+		assertThat(var.size(), is(2) );
+		
+		
+		var.put("key3", "new val");
+		assertThat(var.size(), is(3) );
+		assertThat(var.get("key1").toString(), is("val1") );
+		assertThat(var.get("key2").toString(), is("val2") );
+		assertThat(var.get("key3").toString(), is("new val") );
+	}
+	
+	@Test
+	public void addListTest() {
+		Var var = new Var(new ArrayList(Arrays.asList("aa","bb")));
+		assertThat(var.isType() , is(DataType.LIST));
+		assertThat(var.size(), is(2));
+		assertThat(var.get(0).toString(), is ("aa"));
+		assertThat(var.get(1).toString(), is("bb"));
+		
+		var.add("cc");
+		assertThat(var.size(), is(3));
+		assertThat(var.get(2).toString(), is ("cc"));
+	}
 	
 	@Test
 	public void findListTest() {

@@ -208,10 +208,54 @@ public final class JsonParser {
 	 * @param token
 	 * @return
 	 */
-	static Var number(CharTokenizer token) {		
+	static Var number(CharTokenizer token) {			
+		Long temp = null;		
+		if ( (temp=integer(token)) == null ){
+			return null;			
+		}
+		
+		//정수임
+		if (token.hasNext()==false || ismoreToken(token.read()))
+			return new Var(temp);
+				
+		StringBuilder num = new StringBuilder().append(temp);
+		//소숫점형임
+		if (token.next()=='.') {
+			if (isNumber(token.read())==false) {
+				throw new JsonParseExecption("Decimal-Point Next is not numberic.("+token.debugText()+")");
+			}
+			
+			if ((temp = integer(token)) != null) {
+				num.append(".").append(temp);
+			}else{
+				throw new JsonParseExecption("Decimal-Point next Not found numberic.("+token.debugText()+")");
+			}
+		}
+		if (token.hasNext()==false|| ismoreToken(token.read()))
+			return new Var(Double.parseDouble(num.toString()));
+
+		//지수형표현
+		if (token.read()=='e' || token.read()=='E') {
+			token.next();
+			if ((temp=integer(token)) != null) {
+				return new Var(Double.parseDouble(num.append("e").append(temp).toString()));				
+			}
+		}
+		
+		throw new JsonParseExecption("Unknown Number Parse Error. ("+token.debugText()+")");		
+	}
+	
+	
+	/**
+	 * 숫자형을 리턴한다.
+	 * @param token
+	 * @see number(CharTokenizer token)
+	 * @return
+	 */
+	private static Long integer(CharTokenizer token) {
 		token.transactionMode();				
 		final StringBuffer number = new StringBuffer("");		
-		
+				
 		//기호체크
 		switch(token.read()) {
 			case '+':
@@ -230,31 +274,9 @@ public final class JsonParser {
 		if(number.length()<=0) {			
 				token.rollback();
 				return null;			
-		}
-		//정수임		
-		if (token.hasNext()==false || token.read() != '.') {
-			token.commit();
-			if (token.hasNext() && !ismoreToken(token.read())) {
-				throw new JsonParseExecption("Unexpected Integer Character Set.("+token.debugText()+")"); // 숫자에 붙어서는 안될 숫자가 붙음.
-			}
-			return new Var(Long.parseLong(number.toString()));
-		}
-		//실수임
-		boolean isDecimal = false;
-		number.append(token.next());
-		while(token.hasNext() && isNumber(token.read())) {
-			number.append(token.next());
-			isDecimal = true;
-		}
-		if (isDecimal) {
-			token.commit();
-			if (token.hasNext() && !ismoreToken(token.read())) {
-				throw new JsonParseExecption("Unexpected Double Character Set.("+token.debugText()+")"); // 숫자에 붙어서는 안될 숫자가 붙음.
-			}
-			return new Var(Double.parseDouble(number.toString()));
 		}else{
-			token.rollback();
-			return null;
+			token.commit();
+			return Long.parseLong(number.toString());
 		}
 	}
 	

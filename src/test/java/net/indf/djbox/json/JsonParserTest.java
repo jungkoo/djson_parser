@@ -321,6 +321,15 @@ public class JsonParserTest {
 		// parse error
 	}
 	
+	//지수형 숫자 테스트
+	@Test
+	public void exponentialNumberTest() {
+		CharTokenizer token = new CharTokenizer("1.12e2");
+		Var var = JsonParser.number(token);
+		assertThat(var.isType(), is(DataType.NUMBER));
+		assertThat(var.toDouble(), is(1.12e2));		
+	}
+	
 	@Test
 	public void numberOfMinusDoubleTest() {
 		CharTokenizer token = new CharTokenizer("-123.567");

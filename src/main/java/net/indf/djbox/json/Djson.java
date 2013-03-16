@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Arrays;
 
 import net.indf.djbox.json.exception.JsonParseExecption;
 /******
@@ -42,6 +43,7 @@ public class Djson {
 		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream(), charset));
 		int c;
 		CharArrayWriter cw = new CharArrayWriter();
+		
 		while ((c = in.read()) != -1)  {
 			 cw.append((char)c);   
 		}
@@ -95,8 +97,15 @@ public class Djson {
 		}
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file),charset));
-		int c;
+		int c=-1;
 		CharArrayWriter cw = new CharArrayWriter();
+
+		//BOM skip		
+		if ((c = br.read()) != -1 && !Arrays.asList(0xEFBBBF,0xFEFF,0xFFFE,0x00FEFF,0xfffe00).contains(c)) {
+			cw.append((char)c);
+		}
+	
+		
 		while( (c = br.read()) != -1) {			
 			cw.append((char)c);
 	    }
