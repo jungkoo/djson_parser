@@ -12,12 +12,11 @@ primitive type friendlily. (ex. String, Double, Integer, Boolean, Map, List)
 
 * source:
 
-      Var integer = Djson.parse("123");
-    	System.out.println("TYPE : " + integer.isType());
-    	System.out.println("VALUE: " + integer.toInt());
-
-    	System.out.println();		
-
+        Var integer = Djson.parse("123");
+        System.out.println("TYPE : " + integer.isType());
+        System.out.println("VALUE: " + integer.toDouble());
+        
+        System.out.println();        	
     	Var dotNum = Djson.parse("456.78");
     	System.out.println("TYPE : " + dotNum.isType());
     	System.out.println("VALUE: " + dotNum.toDouble());
